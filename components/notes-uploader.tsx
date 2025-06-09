@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState, useCallback } from "react"
-import { motion, AnimatePresence } from "framer-motion"
 import { Upload, File, ImageIcon, FileText, X, Check, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -110,30 +109,23 @@ export default function NotesUploader() {
     <div className="min-h-screen bg-white pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-6">
         {/* Header */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
+        <div className="text-center mb-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
           <h1 className="text-5xl font-light text-gray-900 mb-6">
             Upload Your
-            <span className="text-mint-600 font-medium"> Notes</span>
+            <span className="text-teal-600 font-medium"> Notes</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Drag and drop your study materials or click to browse. We support PDFs, images, and text documents.
           </p>
-        </motion.div>
+        </div>
 
         {/* Upload Area */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
           <Card
             className={`border-2 border-dashed transition-all duration-300 ${
-              isDragOver ? "border-mint-500 bg-mint-50" : "border-gray-300 hover:border-mint-400"
+              isDragOver
+                ? "border-teal-500 bg-teal-50 scale-105"
+                : "border-gray-300 hover:border-teal-400 hover:shadow-lg"
             }`}
           >
             <CardContent
@@ -143,14 +135,18 @@ export default function NotesUploader() {
               onDrop={handleDrop}
               onClick={() => document.getElementById("file-input")?.click()}
             >
-              <motion.div animate={{ scale: isDragOver ? 1.05 : 1 }} transition={{ duration: 0.2 }}>
-                <Upload className={`w-16 h-16 mx-auto mb-6 ${isDragOver ? "text-mint-600" : "text-gray-400"}`} />
+              <div className={`transition-transform duration-300 ${isDragOver ? "scale-110" : ""}`}>
+                <Upload
+                  className={`w-16 h-16 mx-auto mb-6 transition-colors duration-300 ${
+                    isDragOver ? "text-teal-600" : "text-gray-400"
+                  }`}
+                />
                 <h3 className="text-2xl font-semibold text-gray-900 mb-3">
                   {isDragOver ? "Drop your files here" : "Upload your study materials"}
                 </h3>
                 <p className="text-gray-600 mb-6">Drag and drop files here, or click to browse</p>
                 <Button
-                  className="bg-mint-600 hover:bg-mint-700 text-white rounded-full px-8"
+                  className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-8 hover:scale-105 transition-all duration-300 shadow-lg"
                   onClick={(e) => {
                     e.stopPropagation()
                     document.getElementById("file-input")?.click()
@@ -158,7 +154,7 @@ export default function NotesUploader() {
                 >
                   Choose Files
                 </Button>
-              </motion.div>
+              </div>
               <input
                 id="file-input"
                 type="file"
@@ -169,96 +165,86 @@ export default function NotesUploader() {
               />
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
         {/* File List */}
-        <AnimatePresence>
-          {files.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.5 }}
-              className="mt-12"
-            >
-              <h3 className="text-2xl font-semibold text-gray-900 mb-6">Uploaded Files ({files.length})</h3>
-              <div className="space-y-4">
-                {files.map((file) => {
-                  const FileIcon = getFileIcon(file.type)
-                  return (
-                    <motion.div
-                      key={file.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Card className="border border-gray-200 hover:shadow-md transition-shadow">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4 flex-1">
-                              <div className="w-12 h-12 bg-mint-100 rounded-lg flex items-center justify-center">
-                                <FileIcon className="w-6 h-6 text-mint-600" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <h4 className="text-lg font-medium text-gray-900 truncate">{file.name}</h4>
-                                <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
-                                {file.status === "uploading" && (
-                                  <div className="mt-2">
-                                    <Progress value={file.progress} className="h-2" />
-                                    <p className="text-xs text-gray-500 mt-1">
-                                      Uploading... {Math.round(file.progress)}%
-                                    </p>
-                                  </div>
-                                )}
-                                {file.status === "processing" && (
-                                  <div className="flex items-center mt-2">
-                                    <Loader2 className="w-4 h-4 animate-spin text-mint-600 mr-2" />
-                                    <p className="text-xs text-mint-600">Processing...</p>
-                                  </div>
-                                )}
-                                {file.status === "completed" && (
-                                  <div className="flex items-center mt-2">
-                                    <Check className="w-4 h-4 text-green-600 mr-2" />
-                                    <p className="text-xs text-green-600">Ready for study</p>
-                                  </div>
-                                )}
-                              </div>
+        {files.length > 0 && (
+          <div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-6">Uploaded Files ({files.length})</h3>
+            <div className="space-y-4">
+              {files.map((file, index) => {
+                const FileIcon = getFileIcon(file.type)
+                return (
+                  <div
+                    key={file.id}
+                    className="animate-in fade-in slide-in-from-left-4 duration-300"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <Card className="border border-gray-200 hover:shadow-md transition-all duration-300 hover:shadow-teal-100">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4 flex-1">
+                            <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+                              <FileIcon className="w-6 h-6 text-teal-600" />
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeFile(file.id)}
-                              className="text-gray-400 hover:text-red-500"
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-lg font-medium text-gray-900 truncate">{file.name}</h4>
+                              <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
+                              {file.status === "uploading" && (
+                                <div className="mt-2">
+                                  <Progress value={file.progress} className="h-2" />
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    Uploading... {Math.round(file.progress)}%
+                                  </p>
+                                </div>
+                              )}
+                              {file.status === "processing" && (
+                                <div className="flex items-center mt-2">
+                                  <Loader2 className="w-4 h-4 animate-spin text-teal-600 mr-2" />
+                                  <p className="text-xs text-teal-600">Processing...</p>
+                                </div>
+                              )}
+                              {file.status === "completed" && (
+                                <div className="flex items-center mt-2">
+                                  <Check className="w-4 h-4 text-green-600 mr-2" />
+                                  <p className="text-xs text-green-600">Ready for study</p>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  )
-                })}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFile(file.id)}
+                            className="text-gray-400 hover:text-red-500 hover:scale-110 transition-all duration-200"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons */}
         {files.some((f) => f.status === "completed") && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-12 text-center"
-          >
+          <div className="mt-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
             <div className="space-x-4">
-              <Button className="bg-mint-600 hover:bg-mint-700 text-white rounded-full px-8">Generate Summary</Button>
-              <Button variant="outline" className="rounded-full px-8">
+              <Button className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-8 hover:scale-105 transition-all duration-300 shadow-lg">
+                Generate Summary
+              </Button>
+              <Button
+                variant="outline"
+                className="rounded-full px-8 hover:scale-105 transition-all duration-300 border-teal-200 hover:border-teal-400 hover:bg-teal-50"
+              >
                 Create Quiz
               </Button>
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
     </div>
