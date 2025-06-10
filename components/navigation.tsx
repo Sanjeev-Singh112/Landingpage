@@ -11,12 +11,12 @@ interface NavigationProps {
 
 const navItems = [
   { id: "home", label: "Home", icon: Home },
-  { id: "notes-uploader", label: "Upload", icon: Upload, hasExternalLink: true },
-  { id: "goals", label: "Goals", icon: Target },
-  { id: "summarise", label: "Summarise", icon: FileText },
-  { id: "quiz", label: "Quiz", icon: Brain },
-  { id: "progress", label: "Progress", icon: TrendingUp },
-  { id: "chat", label: "Chat", icon: MessageCircle },
+  { id: "notes-uploader", label: "Upload", icon: Upload, hasExternalLink: true, route: "/notes-uploader" },
+  { id: "goals", label: "Goals", icon: Target, hasExternalLink: true, route: "/goal-setter" },
+  { id: "summarise", label: "Summarise", icon: FileText, hasExternalLink: true, route: "/summariser" },
+  { id: "quiz", label: "Quiz", icon: Brain, hasExternalLink: true, route: "/quiz-generator" },
+  { id: "progress", label: "Progress", icon: TrendingUp, hasExternalLink: true, route: "/progress-feedback" },
+  { id: "chat", label: "Chat", icon: MessageCircle, hasExternalLink: true, route: "/ai-companion" },
 ]
 
 export default function Navigation({ activeSection, setActiveSection }: NavigationProps) {
@@ -31,9 +31,9 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const handleNavClick = (itemId: string, hasExternalLink?: boolean) => {
-    if (hasExternalLink && itemId === "notes-uploader") {
-      window.open("/notes-uploader", "_blank")
+  const handleNavClick = (itemId: string, hasExternalLink?: boolean, route?: string) => {
+    if (hasExternalLink && route) {
+      window.open(route, "_blank")
     } else {
       setActiveSection(itemId)
     }
@@ -65,7 +65,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
                     ? "bg-teal-100 text-teal-700"
                     : "text-gray-600 hover:text-teal-600 hover:bg-teal-50"
                 }`}
-                onClick={() => handleNavClick(item.id, item.hasExternalLink)}
+                onClick={() => handleNavClick(item.id, item.hasExternalLink, item.route)}
               >
                 <item.icon className="w-4 h-4" />
                 <span className="text-sm font-medium">{item.label}</span>
@@ -104,7 +104,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
                       : "text-gray-600 hover:text-teal-600 hover:bg-teal-50"
                   }`}
                   onClick={() => {
-                    handleNavClick(item.id, item.hasExternalLink)
+                    handleNavClick(item.id, item.hasExternalLink, item.route)
                     setIsMobileMenuOpen(false)
                   }}
                 >
