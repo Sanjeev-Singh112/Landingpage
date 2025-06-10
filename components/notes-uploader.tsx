@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useCallback } from "react"
-import { Upload, File, ImageIcon, FileText, X, Check, Loader2 } from "lucide-react"
+import { Upload, File, ImageIcon, FileText, X, Check, Loader2, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
@@ -20,6 +20,10 @@ interface UploadedFile {
 export default function NotesUploader() {
   const [files, setFiles] = useState<UploadedFile[]>([])
   const [isDragOver, setIsDragOver] = useState(false)
+
+  const handleOpenDedicatedApp = () => {
+    window.open("/notes-uploader", "_blank")
+  }
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -114,9 +118,16 @@ export default function NotesUploader() {
             Upload Your
             <span className="text-teal-600 font-medium"> Notes</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
             Drag and drop your study materials or click to browse. We support PDFs, images, and text documents.
           </p>
+          <Button
+            onClick={handleOpenDedicatedApp}
+            className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-6 py-2 hover:scale-105 transition-all duration-300"
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            Open Full Notes Uploader
+          </Button>
         </div>
 
         {/* Upload Area */}

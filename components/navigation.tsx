@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Home, Upload, Target, FileText, Brain, TrendingUp, MessageCircle, Menu } from "lucide-react"
+import { Home, Upload, Target, FileText, Brain, TrendingUp, MessageCircle, Menu, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface NavigationProps {
@@ -11,7 +11,7 @@ interface NavigationProps {
 
 const navItems = [
   { id: "home", label: "Home", icon: Home },
-  { id: "notes-uploader", label: "Upload", icon: Upload },
+  { id: "notes-uploader", label: "Upload", icon: Upload, hasExternalLink: true },
   { id: "goals", label: "Goals", icon: Target },
   { id: "summarise", label: "Summarise", icon: FileText },
   { id: "quiz", label: "Quiz", icon: Brain },
@@ -30,6 +30,14 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const handleNavClick = (itemId: string, hasExternalLink?: boolean) => {
+    if (hasExternalLink && itemId === "notes-uploader") {
+      window.open("/notes-uploader", "_blank")
+    } else {
+      setActiveSection(itemId)
+    }
+  }
 
   return (
     <nav
@@ -52,15 +60,18 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
             {navItems.map((item) => (
               <button
                 key={item.id}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200 hover:scale-105 ${
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200 hover:scale-105 group ${
                   activeSection === item.id
                     ? "bg-teal-100 text-teal-700"
                     : "text-gray-600 hover:text-teal-600 hover:bg-teal-50"
                 }`}
-                onClick={() => setActiveSection(item.id)}
+                onClick={() => handleNavClick(item.id, item.hasExternalLink)}
               >
                 <item.icon className="w-4 h-4" />
                 <span className="text-sm font-medium">{item.label}</span>
+                {item.hasExternalLink && (
+                  <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                )}
               </button>
             ))}
           </div>
@@ -87,18 +98,21 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
               {navItems.map((item) => (
                 <button
                   key={item.id}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                  className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
                     activeSection === item.id
                       ? "bg-teal-100 text-teal-700"
                       : "text-gray-600 hover:text-teal-600 hover:bg-teal-50"
                   }`}
                   onClick={() => {
-                    setActiveSection(item.id)
+                    handleNavClick(item.id, item.hasExternalLink)
                     setIsMobileMenuOpen(false)
                   }}
                 >
-                  <item.icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
+                  <div className="flex items-center space-x-3">
+                    <item.icon className="w-5 h-5" />
+                    <span className="font-medium">{item.label}</span>
+                  </div>
+                  {item.hasExternalLink && <ExternalLink className="w-4 h-4" />}
                 </button>
               ))}
             </div>

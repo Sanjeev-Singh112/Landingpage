@@ -11,6 +11,7 @@ import {
   CheckCircle,
   Calculator,
   Heart,
+  ExternalLink,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -23,6 +24,7 @@ const features = [
     title: "Notes Uploader",
     description: "Upload and organize your study materials with intelligent categorization",
     color: "bg-teal-100",
+    hasExternalLink: true,
   },
   {
     icon: Target,
@@ -77,6 +79,11 @@ const features = [
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState("home")
 
+  const handleNotesUploaderClick = () => {
+    // Open the dedicated Notes Uploader website in a new tab
+    window.open("/notes-uploader", "_blank")
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation activeSection={activeSection} setActiveSection={setActiveSection} />
@@ -97,7 +104,7 @@ export default function HomePage() {
                 <Button
                   size="lg"
                   className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
-                  onClick={() => setActiveSection("notes-uploader")}
+                  onClick={handleNotesUploaderClick}
                 >
                   Get Started
                 </Button>
@@ -127,11 +134,16 @@ export default function HomePage() {
                   <div
                     key={feature.title}
                     className="group cursor-pointer transform transition-all duration-300 hover:-translate-y-2"
-                    onClick={() => feature.title === "Notes Uploader" && setActiveSection("notes-uploader")}
+                    onClick={() => feature.hasExternalLink && handleNotesUploaderClick()}
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-full group-hover:shadow-teal-100">
-                      <CardContent className="p-8">
+                      <CardContent className="p-8 relative">
+                        {feature.hasExternalLink && (
+                          <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <ExternalLink className="w-5 h-5 text-teal-600" />
+                          </div>
+                        )}
                         <div
                           className={`w-16 h-16 ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
                         >
@@ -139,6 +151,11 @@ export default function HomePage() {
                         </div>
                         <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
                         <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                        {feature.hasExternalLink && (
+                          <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <span className="text-sm text-teal-600 font-medium">Open dedicated app →</span>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   </div>
@@ -154,12 +171,22 @@ export default function HomePage() {
               <p className="text-xl text-gray-600 mb-12">
                 Join thousands of students already achieving their academic goals
               </p>
-              <Button
-                size="lg"
-                className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
-              >
-                Start Free Trial
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  size="lg"
+                  className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
+                >
+                  Start Free Trial
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105"
+                  onClick={handleNotesUploaderClick}
+                >
+                  Try Notes Uploader
+                </Button>
+              </div>
             </div>
           </section>
         </>
